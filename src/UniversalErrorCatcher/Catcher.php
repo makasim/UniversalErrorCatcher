@@ -26,9 +26,16 @@ class UniversalErrorCatcher_Catcher
 
     protected $throwRecoverableErrors = false;
 
+    protected $handleRecoverableErrors = true;
+
     public function setThrowRecoverableErrors($boolean)
     {
         $this->throwRecoverableErrors = (boolean) $boolean;
+    }
+
+    public function setHandleRecoverableErrors($boolean)
+    {
+        $this->handleRecoverableErrors = (boolean) $boolean;
     }
     
     /**
@@ -81,7 +88,9 @@ class UniversalErrorCatcher_Catcher
         // it could be any less zero values
         0 == error_reporting() &&  @error_reporting(-1);
 
-        set_error_handler(array($this, 'handleError'));
+        if ($this->handleRecoverableErrors) {
+            set_error_handler(array($this, 'handleError'));
+        }
         register_shutdown_function(array($this, 'handleFatalError'));
         set_exception_handler(array($this, 'handleException'));
 
